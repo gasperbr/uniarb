@@ -19,7 +19,7 @@ contract UniV3Arb is Owned(msg.sender) {
         ERC20(startingToken).approve(address(swapRouter), type(uint256).max);
     }
 
-    function setTokenPairPath(address[] memory tokensA, address[] memory tokensB, bytes[] memory paths) external onlyOwner {
+    function setTokenPairPath(address[] memory tokensA, address[] memory tokensB, bytes[] memory paths) public onlyOwner {
         for(uint256 i = 0; i < tokensA.length; i++) {
             _setTokenPairPath(tokensA[i], tokensB[i], paths[i]);
         }

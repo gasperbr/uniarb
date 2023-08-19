@@ -28,7 +28,7 @@ contract CounterScript is Script {
     }
 
     function deploy() public {
-        arbContract = new UniV3Arb(token);
+        arbContract = new UniV3Arb(tradeToken);
         console2.log("Deployed UniV3Arb at address: ", address(arbContract));
 
         uint24 _100 = uint24(100);
@@ -98,7 +98,7 @@ contract CounterScript is Script {
         
         _storePath(wstEth, link, abi.encode(_100, weth, _500));
 
-        arbContract.setPaths(tokensA, tokensB, paths);
+        arbContract.setTokenPairPath(tokensA, tokensB, paths);
     }
     
     function _storePath(address tokenA, address tokenB, bytes memory path) internal {

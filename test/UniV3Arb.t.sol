@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.19;
 
 import {Test, console, console2} from "forge-std/Test.sol";
 import "src/UniV3Arb.sol";
 import "./MockToken.sol";
-import "./interface/INonfungiblePositionManager.sol";
+import "../utils/Toolkit.sol";
+import "../src/interfaces/INonfungiblePositionManager.sol";
 
-contract UniV3ArbTest is Test {
+contract UniV3ArbTest is Test, Toolkit {
 
-    ERC20 token = new MockToken("TestToken", "TEST");
-    INonfungiblePositionManager public constant manager = INonfungiblePositionManager(0xC36442b4a4522E871399CD717aBDD847Ab11FE88);
+    MockToken token = new MockToken("TestToken", "TEST");
+    INonfungiblePositionManager manager = INonfungiblePositionManager(payable(0xC36442b4a4522E871399CD717aBDD847Ab11FE88));
     ISwapRouter public constant router = ISwapRouter(0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45);
 
     address usdce = 0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8;
@@ -22,10 +23,17 @@ contract UniV3ArbTest is Test {
     address wstEth = 0x5979D7b546E38E414F7E9822514be443A4800529;
     address link = 0xf97f4df75117a78c1A5a0DBb814Af92458539FB4;
 
-    function setUp() {
+    address[] tokens = [usdce, usdc, usdt, weth, arb, gmx, wbtc, wstEth, link];
+    function setUp() public {
         token.approve(address(router), type(uint256).max);
         token.approve(address(manager), type(uint256).max);
-        manager.createAndInitializePoolIfNecessary(address token0, address token1, uint24 fee, uint160 sqrtPriceX96)
+        token.mint(address(this), 100000000 * 10**18);
+        uint24 fee = 50;
+
+        for (uint256 i = 0; i < tokens.length; i++) {
+            uint160 sqrtPriceX96 = encodePriceSqrt(1, 18);
+            manager.createAndInitializePoolIfNecessary(address(token), tokens[i], fee, sqrtPriceX96);
+        }
     }
 
 }
