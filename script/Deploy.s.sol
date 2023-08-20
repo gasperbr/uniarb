@@ -106,5 +106,4 @@ contract CounterScript is Script {
         tokensB.push(tokenB);
         paths.push(path);
     }
-
 }

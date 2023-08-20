@@ -28,13 +28,34 @@ contract UniV3ArbTest is Test, Toolkit {
     function setUp() public {
         token.approve(address(router), type(uint256).max);
         token.approve(address(manager), type(uint256).max);
-        uint24 fee = 50;
+        uint24 fee = 500;
         
         for (uint256 i = 0; i < tokens.length; i++) {
             uint256 token1Amount = type(uint256).max / tokens.length;
-            uint256 token2Amount = 10_000 gwei;
+            uint256 token2Amount = 0;
             uint160 sqrtPriceX96 = encodePriceSqrt(address(token), tokens[i], token1Amount, token2Amount);
-            manager.createAndInitializePoolIfNecessary(address(token), tokens[i], fee, sqrtPriceX96);
+
+            manager.createAndInitializePoolIfNecessary(address(token), address(tokens[i]), fee, sqrtPriceX96);
         }
+    }
+
+    function testTrade() public {
+        // Initial swap WETH -> TEST
+
+        bytes memory basePath = abi.encodePacked(
+            token,
+            abi.encode(uint24(10000)),
+            weth
+        );
+
+        router.exactInput(
+            ISwapRouter.ExactInputParams({
+                path: basePath,
+                amountIn: 1 ether,
+                // TODO: calcuate amount out
+                amountOutMinimum: 1,
+                recipient: address(this)
+            })
+        );
     }
 }
