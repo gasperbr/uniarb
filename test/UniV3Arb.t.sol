@@ -24,16 +24,17 @@ contract UniV3ArbTest is Test, Toolkit {
     address link = 0xf97f4df75117a78c1A5a0DBb814Af92458539FB4;
 
     address[] tokens = [usdce, usdc, usdt, weth, arb, gmx, wbtc, wstEth, link];
+
     function setUp() public {
         token.approve(address(router), type(uint256).max);
         token.approve(address(manager), type(uint256).max);
-        token.mint(address(this), 100000000 * 10**18);
         uint24 fee = 50;
-
+        
         for (uint256 i = 0; i < tokens.length; i++) {
-            uint160 sqrtPriceX96 = encodePriceSqrt(1, 18);
+            uint256 token1Amount = type(uint256).max / tokens.length;
+            uint256 token2Amount = 10_000 gwei;
+            uint160 sqrtPriceX96 = encodePriceSqrt(address(token), tokens[i], token1Amount, token2Amount);
             manager.createAndInitializePoolIfNecessary(address(token), tokens[i], fee, sqrtPriceX96);
         }
     }
-
 }

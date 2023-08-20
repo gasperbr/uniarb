@@ -69,7 +69,7 @@ pragma solidity ^0.8.19;
 
     /// @notice Encodes 1 token0 = X token1
     function encodePriceSqrt(uint256 reserve1, uint256 reserve0)
-        public
+        internal
         pure
         returns (uint160)
     {
